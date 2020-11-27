@@ -1,3 +1,4 @@
+use appdb;
 -- --------------------------------------------------------
 -- Host:                         localhost
 -- Versi server:                 5.5.25a - MySQL Community Server (GPL)

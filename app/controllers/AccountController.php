@@ -17,7 +17,7 @@ class AccountController extends Controller {
 
         if ($v->validate()) {
             $account = new Account($this->db);
-            $pwd = md5($password);
+            $pwd = $password;//md5($password); //I removed this from the demo.
             $acc = $account->select("*", "email='$email' and password='$pwd'");
             if ($acc) {
                 $this->f3->set('SESSION.acc', $acc);
