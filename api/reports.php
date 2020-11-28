@@ -830,7 +830,7 @@ final class WebReports
         }
         ';
         $response = json_decode($response);
-        return $response->message;
+        return $response;
     }
 
 }
