@@ -6,29 +6,28 @@
  */
 
 function GetCustomersList() {
-        $('#admin_customer').show()
-        getFromAPI({
-            method: 'IOT_GetCustomerList'
-        }, function (data) {
-            if (data.message != null) {
-                $('#sel_customer')
-                    .find('option')
-                    .remove()
-                    .end()
-                $('#sel_customer')
-                    .append('<option value="">Select One</option>')
-                for (i = 0; i < data.message.length; i++) {
-                    var value = data.message[i]['customer']
-                    var text = data.message[i]['customer']
-                    if (value != null) {
-                        selected = ''
-                        $('#sel_customer')
-                            .append('<option value="' + value + '" ' + selected + '>' + text + '</option>')
-                    }
+    $('#admin_customer').show()
+    getFromAPI({
+        method: 'IOT_GetCustomerList'
+    }, function (data) {
+        if (data.message != null) {
+            $('#sel_customer')
+                .find('option')
+                .remove()
+                .end()
+            $('#sel_customer')
+                .append('<option value="">Select One</option>')
+            for (i = 0; i < data.message.length; i++) {
+                var value = data.message[i]['customer']
+                var text = data.message[i]['customer']
+                if (value != null) {
+                    selected = ''
+                    $('#sel_customer')
+                        .append('<option value="' + value + '" ' + selected + '>' + text + '</option>')
                 }
             }
-        })
-
+        }
+    })
 }
 
 function GetPeriodList() {
@@ -64,13 +63,22 @@ function GetReportsList() {
         .end()
     $('#sel_report')
         .append('<option value="">Select One</option>')
-
     getFromAPI({
-      method: 'IOT_GetReportsList',
+        method: 'IOT_GetReportsList',
     }, function (data) {
-    if (data.message != null) {
-
-      }
+        if (data.message != null) {
+            for (i = 0; i < data.message.length; i++) {
+                var value = data.message[i]
+                var text = data.message[i]
+                if (value != null) {
+                    $('#sel_report')
+                        .append($('<option>', {
+                            value: value,
+                            text: text
+                        }))
+                }
+            }
+        }
     })
 }
 
@@ -80,6 +88,7 @@ function ExportReport(fileFormat) {
     ShowExportReportDialog(fileFormat, $('#sel_report').val(), $('#sel_customer').val(), $('#sel_date').val())
 
 }
+
 function GetReport() {
 
     isError = false
@@ -126,7 +135,6 @@ function GetReport() {
 
     //set the report header.
     var reportName = 'Report: ' + $('#sel_report').val() + ' <br> Customer: ' + $('#sel_customer').val() + ' <br> Period: ' + $('#sel_date').val();
-
 
     //set footer
     var str = '<tr class="text-bold">';
@@ -214,27 +222,9 @@ function ShowOrdersReport() {
 
 }
 
-//load this at the start of each page.
-$(document).ready(function () {
-
-    //show loading status
-    $('#reports-loading').show()
-    $('#reports-body').hide()
-
-    //load dropdowns
-    GetReportsList();
-    GetPeriodList();
-    GetCustomersList();
-
-    //hide loading status
-    $('#reports-loading').hide()
-    $('#reports-body').show()
-
-
-})
-
 var result_table = null;
 var result_table_columns = [];
+
 
 // Register an API method that will empty the pipelined data, forcing an Ajax
 $.fn.dataTable.Api.register('clearPipeline()', function () {
@@ -273,7 +263,7 @@ $.fn.dataTable.pipeline = function (opts) {
         } else if (cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper) {
             // outside cached data - need to make a request
             ajax = true;
-        } else if (JSON.stringify(request.order) !== JSON.stringify(cacheLastRequest.order)) //||  JSON.stringify(request.columns) !== JSON.stringify(cacheLastRequest.columns) || JSON.stringify(request.search) !== JSON.stringify(cacheLastRequest.search)
+        } else if (JSON.stringify(request.order) !== JSON.stringify(cacheLastRequest.order))
         {
             // properties changed (ordering, columns, searching)
             ajax = true;
@@ -327,16 +317,14 @@ $.fn.dataTable.pipeline = function (opts) {
                             "recordsTotal": 0,
                             "recordsFiltered": 0
                         }
-                    }
-                    else if (json.message.toString().indexOf("FAIL") !== -1) {
+                    } else if (json.message.toString().indexOf("FAIL") !== -1) {
                         toastr.error(json.message);
                         dt = {
                             "data": [],
                             "recordsTotal": 0,
                             "recordsFiltered": 0
                         }
-                    }
-                    else {
+                    } else {
                         dt = {
                             "data": json.message.result,
                             "recordsTotal": json.message.total,
@@ -376,7 +364,6 @@ $.fn.dataTable.pipeline = function (opts) {
     }
 };
 
-
 var request_method_list = "";
 var getFromAPI = function (dataparam, action, fail, is_async) {
     var request_method = dataparam.method;
@@ -405,11 +392,32 @@ var getFromAPI = function (dataparam, action, fail, is_async) {
                 message: [m.responseText]
             });
             if (!err.message) {
-                err = { message: [err] }
+                err = {message: [err]}
             }
             console.log(err);
         }
     })
 };
 
+if (typeof jQuery === "undefined") {
+   alert("AdminLTE requires jQuery");
+}
 
+//load this at the start of each page.
+$(document).ready(function () {
+
+    //show loading status
+    $('#reports-loading').show()
+    $('#reports-body').hide()
+
+    //load dropdowns
+    GetReportsList();
+    GetPeriodList();
+    GetCustomersList();
+
+    //hide loading status
+    $('#reports-loading').hide()
+    $('#reports-body').show()
+
+
+})
